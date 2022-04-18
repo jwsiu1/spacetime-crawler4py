@@ -16,12 +16,15 @@ def extract_next_links(url, resp):
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
+    
+    # list to store hyperlinks
     list = []
     # checks that status code is 200
     if resp.status != 200:
+        # check response code error
         print(resp.error)
         return list
-    # use beautifulsoup to extract links
+    # use BeautifulSoup to extract links
     
     return list()
 
