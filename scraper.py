@@ -15,6 +15,10 @@ def extract_next_links(url, resp):
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
+    list = []
+    # checks that status code is 200
+    if resp.status != 200:
+        return list
     return list()
 
 def is_valid(url):
@@ -23,7 +27,12 @@ def is_valid(url):
     # There are already some conditions that return False.
     try:
         parsed = urlparse(url)
+        # checks if scheme is valid
         if parsed.scheme not in set(["http", "https"]):
+            return False
+        # checks if hostname is valid
+        if parsed.hostname not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
+                                       "stat.uci.edu", "today.uci.edu"]):
             return False
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
