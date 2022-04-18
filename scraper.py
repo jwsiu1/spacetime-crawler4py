@@ -19,6 +19,7 @@ def extract_next_links(url, resp):
     list = []
     # checks that status code is 200
     if resp.status != 200:
+        print(resp.error)
         return list
     # use beautifulsoup to extract links
     
