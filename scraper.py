@@ -25,8 +25,12 @@ def extract_next_links(url, resp):
         print(resp.error)
         return list
     # use BeautifulSoup to extract links
+    soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
+    for link in soup.find_all('a'):
+        list.append(link)
+
+    return list
     
-    return list()
 def is_valid(url):
     # Decide whether to crawl this url or not. 
     # If you decide to crawl it, return True; otherwise return False.
