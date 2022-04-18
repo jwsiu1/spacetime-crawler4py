@@ -27,7 +27,6 @@ def extract_next_links(url, resp):
     # use BeautifulSoup to extract links
     
     return list()
-
 def is_valid(url):
     # Decide whether to crawl this url or not. 
     # If you decide to crawl it, return True; otherwise return False.
@@ -38,7 +37,7 @@ def is_valid(url):
         if parsed.scheme not in set(["http", "https"]):
             return False
         # checks if hostname is valid
-        if parsed.hostname not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
+        if parsed.netloc not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
                                        "stat.uci.edu", "today.uci.edu"]):
             return False
         # checks if path is valid
@@ -58,3 +57,16 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+        
+# Report Answers:
+    # unique pages : http://www.ics.uci.edu#aaa and http://www.ics.uci.edu#bbb are the same
+    # longest page in terms of words
+    # 50 most common words (ignore stop words)
+    # number of subdomains (print URL, number)
+    
+    
+    
+    
+    
+    
+    
