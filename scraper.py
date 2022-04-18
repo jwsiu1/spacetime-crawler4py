@@ -38,8 +38,9 @@ def is_valid(url):
         if parsed.hostname not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
                                        "stat.uci.edu", "today.uci.edu"]):
             return False
-        # need to check paths
-        
+        # checks if path is valid
+        if parsed.hostname == "today.uci.edu" and "/department/information_computer_sciences/" not in parsed.path:
+            return False
         
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
