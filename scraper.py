@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -19,6 +20,8 @@ def extract_next_links(url, resp):
     # checks that status code is 200
     if resp.status != 200:
         return list
+    # use beautifulsoup to extract links
+    
     return list()
 
 def is_valid(url):
@@ -34,6 +37,9 @@ def is_valid(url):
         if parsed.hostname not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
                                        "stat.uci.edu", "today.uci.edu"]):
             return False
+        # need to check paths
+        
+        
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
