@@ -69,7 +69,16 @@ def is_valid(url):
     # number of subdomains (print URL, number)
     
     
+def report():
+    # create new text file to store report results
+    f = open("Report.txt", mode="w")
+    f.write("Number of unique pages: ") ## need to defrag urls
+    f.write("Longest page (words): ")
+    f.write("50 most common words: ")
+    f.write("ics.uci.edu subdomains: ")
     
+    
+    f.close
     
     
     
