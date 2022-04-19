@@ -27,7 +27,9 @@ def extract_next_links(url, resp):
     # use BeautifulSoup to extract links
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
     for link in soup.find_all('a'):
-        list.append(link.get('href'))
+        l = link.get('href')
+        l_defrag = l.split("#")
+        list.append(l_defrag[0])
 
     return list
 
