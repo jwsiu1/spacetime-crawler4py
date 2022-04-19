@@ -43,7 +43,7 @@ def is_valid(url):
         if parsed.scheme not in set(["http", "https"]):
             return False
         # checks if hostname is valid
-        if any(parsed.netloc.endswith(domain) for domain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
+        if not any(parsed.netloc.endswith(domain) for domain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", 
                                        "stat.uci.edu", "today.uci.edu"])):
             return False
         # checks if path is valid
