@@ -69,9 +69,10 @@ def is_valid(url):
 def trap(url):
     if "replyto" in url:
         return True
-    if "calendar" in url:
+    if "calendar" in url: 
         return True
-    if "share" in url
+    if "share" in url:
+        return True
     return False
     
 # Report Answers:
