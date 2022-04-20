@@ -22,14 +22,14 @@ def extract_next_links(url, resp):
     # checks that status code is 200
     if resp.status != 200:
         # check response code error
-        print(resp.error)
         return list
     # use BeautifulSoup to extract links
-    soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
+    soup = BeautifulSoup(resp.raw_response.content, 'lxml')
     for link in soup.find_all('a'):
         l = link.get('href')
-        l_defrag = l.split("#")
-        list.append(l_defrag[0])
+        if l is not None:
+            l_defrag = l.split("#")
+            list.append(l_defrag[0])
 
     return list
 
@@ -49,6 +49,9 @@ def is_valid(url):
         # checks if path is valid
         if parsed.netloc.endswith("today.uci.edu") and "/department/information_computer_sciences/" not in parsed.path:
             return False
+        # checks if urls are traps
+        if trap(url):
+            return False
         
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
@@ -63,7 +66,14 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
-        
+def trap(url):
+    if "replyto" in url:
+        return True
+    if "calendar" in url:
+        return True
+    if "share" in url
+    return False
+    
 # Report Answers:
     # unique pages : http://www.ics.uci.edu#aaa and http://www.ics.uci.edu#bbb are the same
     # longest page in terms of words
