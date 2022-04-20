@@ -31,6 +31,9 @@ def extract_next_links(url, resp):
             l_defrag = l.split("#")
             list.append(l_defrag[0])
 
+    set_list = set(list)
+    list = [a for a in set_list]
+    
     return list
 
 def is_valid(url):
@@ -90,8 +93,7 @@ def report():
     f.write("50 most common words: ")
     f.write("ics.uci.edu subdomains: ")
     
-    
-    f.close
+    f.close()
     
     
     
