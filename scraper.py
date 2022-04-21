@@ -206,6 +206,6 @@ def create_report(url):
     
     f.write("\nSubdomains of " + url + ": ")
     visited_urls.remove(url)  # removes original domain from global list
-        for val, subdomain in enumerate(visited_urls):
+        for val, subdomain in enumerate(sorted(visited_urls)):
             f.write('\n' + subdomain + ", " + str(val + 1))
  
