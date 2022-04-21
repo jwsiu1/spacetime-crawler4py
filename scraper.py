@@ -15,6 +15,11 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
               "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", 
               "your", "yours", "yourself", "yourselves"}
 
+visited_urls = set()
+longest_page = ""
+longest_word = 0
+word_freq = defaultdict(int)
+
 def scraper(url, resp):
     create_report()
     # add start urls to list of visited urls
@@ -42,6 +47,8 @@ def extract_next_links(url, resp):
         return list
     # use BeautifulSoup to extract links
     soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+    if soup is not None:
+      tokenize(url, soup)
     for link in soup.find_all('a'):
         l = link.get('href')
         # makes sure link is valid
@@ -100,14 +107,17 @@ def trap(url):
     return False
 
 def tokenize(url, soup):
-    text = soup
-    result = re.split("[^a-zA-Z0-9]", text)
-    result = list(filter(None, result))
-    if len(result) > longest_word:
-      longest_page = url
-      longest_word = len(result)
-    for word in result and word not in stop_words:
-        word_freq[word] += 1
+  global longest_page
+  global longest_word
+  text = soup.get_text()
+  result = re.split("[^a-zA-Z0-9']", text)
+  result = list(filter(None, result))
+  if len(result) > longest_word:
+    longest_page = url
+    longest_word = len(result)
+  for word in result:
+    if word not in stop_words:
+      word_freq[word.lower()] += 1
             
     
     
@@ -121,29 +131,18 @@ def tokenize(url, soup):
 def create_report():
   # set of urls to avoid duplication of url with same domain and path
   global visited_urls 
-  visited_urls = set()
-  # keeps track of the longest page and how many words in the page
-  global longest_page 
-  longest_page = ""
-  global longest_word
-  longest_word = 0
   # dictionary to hold word frequencies
   global word_freq 
-  word_freq = defaultdict(int)
   # create new text file to store report results
-  f = open("Report.txt", mode="w")
-  f.write("Number of unique pages: " + str(len(visited_urls)))
-  f.write("Longest page: " + longest_page + ", " + str(longest_word))
-  f.write("50 most common words: ")
-  word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
-  for word in word_freq:
-    if count < 50:
-      print(word)
-    count += 1
-  f.write("ics.uci.edu subdomains: ")
-    
-  f.close()
-    
-    
-    
-    
+  with open("Report.txt", mode="w") as f
+    f.write("\nNumber of unique pages: " + str(len(visited_urls)))
+    f.write("\nLongest page: " + longest_page + ", " + str(longest_word))
+    f.write("\n50 most common words: ")
+    if len(word_freq) is not None:
+      word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
+      for word in word_freq:
+        if count < 50:
+          f.write(str(word))
+          count += 1
+    f.write("\nics.uci.edu subdomains: ")
+ 
