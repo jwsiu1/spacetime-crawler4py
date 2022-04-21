@@ -145,5 +145,9 @@ def create_report():
         if count < 50:
           f.write(word + ", " + str(total) + "\n")
           count += 1
+          
     f.write("\nics.uci.edu subdomains: ")
+        for val, subdomain in enumerate(visited_urls):
+            if subdomain != url:
+                f.write('\n' + subdomain + ", " + str(val+1))
  
