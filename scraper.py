@@ -27,6 +27,8 @@ def scraper(url, resp):
   # create and update report
   create_report(url)
   
+  links = similarity_threshold(links)
+  
   return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
@@ -122,6 +124,50 @@ def trap(url):
 
   return False
 
+# find similarities between two web pages based on similar tokens and threshold
+def similarity_threshold(links):
+    if len(links) < 2:
+        return
+
+    threshold = 0.90  # 90%
+
+    # store url with its tokens
+    tokens_dict = {}
+
+    # tokenize all links
+    for link in links:
+        page = requests.get(link)
+        s = BeautifulSoup(page.content, 'lxml')
+
+        tokens_dict[link] = set(tokenize(s))
+
+    # compare each link's tokens with the other's
+    for url in links:
+        t1 = tokens_dict[url]
+
+        for link in links:
+            if link != url:
+                t2 = tokens_dict[link]
+
+                a = (t1.intersection(t2))
+                b = (set(t1.union(t2)))
+
+                # print(a)
+                # print(b)
+
+                similarity = (float(len(a) / len(b)))
+                # print(similarity)
+
+                if similarity >= threshold:
+                    links.remove(link)
+
+
+    # for link in links:
+    #     print(link)
+    # print('\n')
+
+    return links
+  
 # tokenizer
 def tokenize(soup):
   global longest_page
