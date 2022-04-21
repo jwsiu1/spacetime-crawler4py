@@ -143,7 +143,7 @@ def create_report():
   # dictionary to hold word frequencies
   global word_freq 
   # create new text file to store report results
-  with open("Report.txt", mode="w") as f
+  with open("Report.txt", mode="w") as f:
     f.write("\nUnique pages: " + str(len(visited_urls)))
     f.write("\nLongest page: " + str(longest_page) + " words")
     f.write("\nCommon words: \n")
