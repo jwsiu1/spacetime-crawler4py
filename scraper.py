@@ -101,8 +101,6 @@ def is_valid(url):
       raise
         
 def trap(url):
-    
-    return False
   # checks for sites with replyto in url
   if "replyto" in url:
       return True
