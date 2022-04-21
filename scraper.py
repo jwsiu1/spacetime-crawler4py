@@ -16,8 +16,7 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
               "your", "yours", "yourself", "yourselves"}
 
 visited_urls = set()
-longest_page = ""
-longest_word = 0
+longest_page = 0
 word_freq = defaultdict(int)
 
 def scraper(url, resp):
@@ -126,14 +125,12 @@ def trap(url):
 # tokenizer
 def tokenize(url, soup):
   global longest_page
-  global longest_word
   text = soup.get_text()
   result = re.split("[^a-zA-Z0-9']", text)
   result = list(filter(None, result))
-  # check and update longest_page and longest_word
-  if len(result) > longest_word:
-    longest_page = url
-    longest_word = len(result)
+  # check and update longest_page
+  if len(result) > longest_page:
+    longest_page = len(result)
   # check and update word freqeuncies
   for word in result:
     if word not in stop_words:
@@ -153,9 +150,9 @@ def create_report():
   global word_freq 
   # create new text file to store report results
   with open("Report.txt", mode="w") as f
-    f.write("\nNumber of unique pages: " + str(len(visited_urls)))
-    f.write("\nLongest page: " + longest_page + ", " + str(longest_word))
-    f.write("\n50 most common words: \n")
+    f.write("\nUnique pages: " + str(len(visited_urls)))
+    f.write("\nLongest page: " + str(longest_page) + " words")
+    f.write("\nCommon words: \n")
     if len(word_freq) is not None:
       result = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
       count = 0
@@ -163,7 +160,7 @@ def create_report():
         if count < 50:
           f.write(word + ", " + str(total) + "\n")
           count += 1
-    f.write("\nics.uci.edu subdomains: ")
+    f.write("\nSubdoamins of ics.uci.edu: ")
         for val, subdomain in enumerate(visited_urls):
             if subdomain != url:
                 f.write('\n' + subdomain + ", " + str(val+1))
