@@ -20,11 +20,13 @@ longest_page = 0
 word_freq = defaultdict(int)
 
 def scraper(url, resp):
-  # create and update report
-  create_report()
   # add start urls to list of visited urls
   visited_urls.add(url)
   links = extract_next_links(url, resp)
+  
+  # create and update report
+  create_report(url)
+  
   return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
@@ -138,7 +140,7 @@ def tokenize(soup):
     # longest page in terms of words
     # 50 most common words (ignore stop words)
     # number of subdomains (print URL, number)
-def create_report():
+def create_report(url):
   # set of urls to avoid duplication of url with same domain and path
   global visited_urls 
   # dictionary to hold word frequencies
@@ -155,8 +157,9 @@ def create_report():
         if count < 50:
           f.write(word + ", " + str(total) + "\n")
           count += 1
-    f.write("\nSubdoamins of ics.uci.edu: ")
-    for val, subdomain in enumerate(visited_urls):
-      if subdomain != url:
-        f.write('\n' + subdomain + ", " + str(val+1))
+    
+    f.write("\nSubdomains of " + url + ": ")
+    visited_urls.remove(url)  # removes original domain from global list
+        for val, subdomain in enumerate(visited_urls):
+            f.write('\n' + subdomain + ", " + str(val + 1))
  
