@@ -139,10 +139,11 @@ def create_report():
     f.write("\nLongest page: " + longest_page + ", " + str(longest_word))
     f.write("\n50 most common words: ")
     if len(word_freq) is not None:
-      word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
-      for word in word_freq:
+      result = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
+      count = 0
+      for word, total in result:
         if count < 50:
-          f.write(str(word))
+          f.write(word + ", " + str(total) + "\n")
           count += 1
     f.write("\nics.uci.edu subdomains: ")
  
