@@ -15,14 +15,6 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
               "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", 
               "your", "yours", "yourself", "yourselves"}
 
-# set of urls to avoid duplication of url with same domain and path
-visited_urls = set()
-# keeps track of the longest page and how many words in the page
-longest_page = ""
-longest_word = 0
-# dictionary to hold word frequencies
-word_freq = defaultdict(int)
-
 def scraper(url, resp):
     # add start urls to list of visited urls
     visited_urls.add(url)
@@ -126,6 +118,13 @@ def tokenize(url, soup):
     
     
 def create_report():
+  # set of urls to avoid duplication of url with same domain and path
+  global visited_urls = set()
+  # keeps track of the longest page and how many words in the page
+  global longest_page = ""
+  global longest_word = 0
+  # dictionary to hold word frequencies
+  global word_freq = defaultdict(int)
     # create new text file to store report results
     f = open("Report.txt", mode="w")
     f.write("Number of unique pages: " + str(len(visited_urls)))
