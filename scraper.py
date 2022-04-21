@@ -128,7 +128,7 @@ def create_report():
   longest_word = 0
   # dictionary to hold word frequencies
   global word_freq 
-  woprd_freq = defaultdict(int)
+  word_freq = defaultdict(int)
     # create new text file to store report results
     f = open("Report.txt", mode="w")
     f.write("Number of unique pages: " + str(len(visited_urls)))
