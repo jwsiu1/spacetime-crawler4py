@@ -155,7 +155,7 @@ def create_report():
           f.write(word + ", " + str(total) + "\n")
           count += 1
     f.write("\nSubdoamins of ics.uci.edu: ")
-        for val, subdomain in enumerate(visited_urls):
-            if subdomain != url:
-                f.write('\n' + subdomain + ", " + str(val+1))
+    for val, subdomain in enumerate(visited_urls):
+      if subdomain != url:
+        f.write('\n' + subdomain + ", " + str(val+1))
  
