@@ -2,7 +2,12 @@ import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
+# set of urls to avoid duplication of url with same domain and path
+visited_urls = set()
+
 def scraper(url, resp):
+    # add start urls to list of visited urls
+    visited_urls.add(url)
     links = extract_next_links(url, resp)
     return [link for link in links if is_valid(link)]
 
@@ -29,11 +34,11 @@ def extract_next_links(url, resp):
         l = link.get('href')
         if l is not None:
             l_defrag = l.split("#")
-            list.append(l_defrag[0])
-
-    set_list = set(list)
-    list = [a for a in set_list]
-    
+            if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
+                visited_urls.add(l_defrag[0])
+                list.append(l_defrag[0])
+    #set_list = set(list)
+    #list = [a for a in set_list]
     return list
 
 def is_valid(url):
@@ -74,7 +79,7 @@ def trap(url):
         return True
     if "calendar" in url: 
         return True
-    if "share" in url:
+    if "?share=" in url:
         return True
     return False
     
@@ -85,7 +90,7 @@ def trap(url):
     # number of subdomains (print URL, number)
     
     
-def report():
+def create_report():
     # create new text file to store report results
     f = open("Report.txt", mode="w")
     f.write("Number of unique pages: ") ## need to defrag urls
