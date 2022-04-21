@@ -46,7 +46,7 @@ def extract_next_links(url, resp):
   # checks that webpages have at least 250 words or less than 20000 words 
   # https://wordcounter.net/words-per-page
   if len(resp.raw_response.content) < 250 or len(resp.raw_response.content) > 45000:
-    return links
+    return list
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
   # checks if there is information
