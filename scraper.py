@@ -129,19 +129,19 @@ def create_report():
   # dictionary to hold word frequencies
   global word_freq 
   word_freq = defaultdict(int)
-    # create new text file to store report results
-    f = open("Report.txt", mode="w")
-    f.write("Number of unique pages: " + str(len(visited_urls)))
-    f.write("Longest page: " + longest_page + ", " + str(longest_word))
-    f.write("50 most common words: ")
-    word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
-    for word in word_freq:
-      if count < 50:
-        print(word)
-      count += 1
-    f.write("ics.uci.edu subdomains: ")
+  # create new text file to store report results
+  f = open("Report.txt", mode="w")
+  f.write("Number of unique pages: " + str(len(visited_urls)))
+  f.write("Longest page: " + longest_page + ", " + str(longest_word))
+  f.write("50 most common words: ")
+  word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
+  for word in word_freq:
+    if count < 50:
+      print(word)
+    count += 1
+  f.write("ics.uci.edu subdomains: ")
     
-    f.close()
+  f.close()
     
     
     
