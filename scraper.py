@@ -16,6 +16,7 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
               "your", "yours", "yourself", "yourselves"}
 
 def scraper(url, resp):
+    create_report()
     # add start urls to list of visited urls
     visited_urls.add(url)
     links = extract_next_links(url, resp)
