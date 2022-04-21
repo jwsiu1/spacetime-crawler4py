@@ -1,9 +1,14 @@
 import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+from nltk.tokenize import RegexpTokenizer
+from collections import defaultdict
 
 # set of urls to avoid duplication of url with same domain and path
 visited_urls = set()
+
+# dictionary to hold word frequencies
+word_freq = defaultdict(int)
 
 def scraper(url, resp):
     # add start urls to list of visited urls
@@ -32,8 +37,11 @@ def extract_next_links(url, resp):
     soup = BeautifulSoup(resp.raw_response.content, 'lxml')
     for link in soup.find_all('a'):
         l = link.get('href')
+        # makes sure link is valid
         if l is not None:
+            # remove url fragment
             l_defrag = l.split("#")
+            # checks for duplication and if url can be crawled
             if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
                 visited_urls.add(l_defrag[0])
                 list.append(l_defrag[0])
@@ -74,6 +82,7 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+        
 def trap(url):
     if "replyto" in url:
         return True
@@ -82,6 +91,15 @@ def trap(url):
     if "?share=" in url:
         return True
     return False
+
+def tokenize(soup):
+    result = []
+    text = RegexpTokenizer(r'\w+')
+    result = text.tokenize(soup.get_text())
+    for word in result:
+        word_freq[word] += 1
+            
+    
     
 # Report Answers:
     # unique pages : http://www.ics.uci.edu#aaa and http://www.ics.uci.edu#bbb are the same
