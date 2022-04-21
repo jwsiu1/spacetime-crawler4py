@@ -51,7 +51,11 @@ def extract_next_links(url, resp):
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
   # checks if there is information
   if soup is not None:
-    tokenize(url, soup)
+     tokens = tokenize(url, soup)
+      # check and update word freqeuncies
+      for word in tokens:
+        if word not in stop_words:
+          word_freq[word.lower()] += 1
   for link in soup.find_all('a'):
       l = link.get('href')
       # makes sure link is valid
@@ -125,10 +129,7 @@ def tokenize(url, soup):
   # check and update longest_page
   if len(result) > longest_page:
     longest_page = len(result)
-  # check and update word freqeuncies
-  for word in result:
-    if word not in stop_words:
-      word_freq[word.lower()] += 1
+  return result
             
     
     
