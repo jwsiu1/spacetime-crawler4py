@@ -1,7 +1,6 @@
 import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from nltk.tokenize import RegexpTokenizer
 from collections import defaultdict
 
 stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", 
@@ -18,7 +17,9 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
 
 # set of urls to avoid duplication of url with same domain and path
 visited_urls = set()
-
+# keeps track of the longest page and how many words in the page
+longest_page = ""
+longest_word = 0
 # dictionary to hold word frequencies
 word_freq = defaultdict(int)
 
@@ -104,10 +105,13 @@ def trap(url):
         return True
     return False
 
-def tokenize(soup):
-    result = []
-    text = RegexpTokenizer('\s+', gaps=True)
-    result = text.tokenize(soup.get_text())
+def tokenize(url, soup):
+    text = soup
+    result = re.split("[^a-zA-Z0-9]", text)
+    result = list(filter(None, result))
+    if len(result) > longest_word:
+      longest_page = url
+      longest_word = len(result)
     for word in result and word not in stop_words:
         word_freq[word] += 1
             
@@ -124,8 +128,13 @@ def create_report():
     # create new text file to store report results
     f = open("Report.txt", mode="w")
     f.write("Number of unique pages: ") ## need to defrag urls
-    f.write("Longest page (words): ")
+    f.write("Longest page: " + longest_page + ", " + str(longest_word))
     f.write("50 most common words: ")
+    word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
+    for word in word_freq:
+      if count < 50:
+        print(word)
+      count += 1
     f.write("ics.uci.edu subdomains: ")
     
     f.close()
