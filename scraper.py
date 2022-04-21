@@ -27,6 +27,7 @@ def scraper(url, resp):
     # add start urls to list of visited urls
     visited_urls.add(url)
     links = extract_next_links(url, resp)
+    create_report()
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
