@@ -101,6 +101,16 @@ def is_valid(url):
       raise
         
 def trap(url):
+    if "replyto" in url:
+        return True
+    if "calendar" in url: 
+        return True
+    if "?share=" in url:
+        return True
+    if re.search('([0-2]{1}[0-9]{3})\/((0[1-9]{1})|(1[0-2]{1}))\/(0[1-9]{1}|[1-2][0-9]{1}|(3[0-1]{1}))', url) != None:
+        return True
+
+    return False
   # checks for sites with replyto in url
   if "replyto" in url:
       return True
