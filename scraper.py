@@ -127,7 +127,7 @@ def tokenize(url, soup):
 def create_report():
     # create new text file to store report results
     f = open("Report.txt", mode="w")
-    f.write("Number of unique pages: " + str(len(visited_url))
+    f.write("Number of unique pages: " + str(len(visited_url)))
     f.write("Longest page: " + longest_page + ", " + str(longest_word))
     f.write("50 most common words: ")
     word_freq = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
