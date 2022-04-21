@@ -119,12 +119,16 @@ def tokenize(url, soup):
     
 def create_report():
   # set of urls to avoid duplication of url with same domain and path
-  global visited_urls = set()
+  global visited_urls 
+  visited_urls = set()
   # keeps track of the longest page and how many words in the page
-  global longest_page = ""
-  global longest_word = 0
+  global longest_page 
+  longest_page = ""
+  global longest_word
+  longest_word = 0
   # dictionary to hold word frequencies
-  global word_freq = defaultdict(int)
+  global word_freq 
+  woprd_freq = defaultdict(int)
     # create new text file to store report results
     f = open("Report.txt", mode="w")
     f.write("Number of unique pages: " + str(len(visited_urls)))
