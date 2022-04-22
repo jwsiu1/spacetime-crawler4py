@@ -1,4 +1,5 @@
 import re
+import requests
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from collections import defaultdict
@@ -24,10 +25,10 @@ def scraper(url, resp):
   visited_urls.add(url)
   links = extract_next_links(url, resp)
   
+  links = similarity_threshold(links)
+  
   # create and update report
   create_report(url)
-  
-  links = similarity_threshold(links)
   
   return [link for link in links if is_valid(link)]
 
@@ -189,6 +190,7 @@ def tokenize(soup):
     # longest page in terms of words
     # 50 most common words (ignore stop words)
     # number of subdomains (print URL, number)
+    
 def create_report(url):
   # set of urls to avoid duplication of url with same domain and path
   global visited_urls 
