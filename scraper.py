@@ -200,11 +200,11 @@ def create_report(url, links):
 
                     # makes sure link is valid
                     if l is not None:
-                        # remove url fragment
-                        l_defrag = l.split('#')
+                      # remove url fragment
+                      l_defrag = l.split('#')
 
-                    # checks for duplication and if url can be crawled
-                    if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
+                      # checks for duplication and if url can be crawled
+                      if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
                         visited_urls.append(l_defrag[0])
                         subdomain_links.append(l_defrag[0])
 
