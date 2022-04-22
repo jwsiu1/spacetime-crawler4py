@@ -65,8 +65,8 @@ def extract_next_links(url, resp):
       if l is not None:
           # remove url fragment
           l_defrag = l.split("#")
-          # checks for duplication and if url can be crawled
-          if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
+          # checks for duplication
+          if l_defrag[0] not in visited_urls:
               visited_urls.add(l_defrag[0])
               list.append(l_defrag[0])
   return list
