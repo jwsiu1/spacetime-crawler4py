@@ -28,7 +28,7 @@ def scraper(url, resp):
   links = similarity_threshold(links)
   
   # create and update report
-  create_report(url)
+  create_report(url, links)
   
   return [link for link in links if is_valid(link)]
 
@@ -191,7 +191,7 @@ def tokenize(soup):
     # 50 most common words (ignore stop words)
     # number of subdomains (print URL, number)
     
-def create_report(url):
+def create_report(url, links):
   # set of urls to avoid duplication of url with same domain and path
   global visited_urls 
   # dictionary to hold word frequencies
@@ -210,7 +210,7 @@ def create_report(url):
           count += 1
     
     f.write("\nSubdomains of " + url + ": ")
-    visited_urls.remove(url)  # removes original domain from global list
-    for val, subdomain in enumerate(sorted(visited_urls)):
-      f.write('\n' + subdomain + ", " + str(val + 1))
+    for val, subdomain in enumerate(sorted(links)):
+      if subdomain != url:
+        f.write('\n' + subdomain + ", " + str(val + 1))
  
