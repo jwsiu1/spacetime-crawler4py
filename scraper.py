@@ -177,8 +177,8 @@ def create_report(url, links):
     con.cache_server = server_registration.get_cache_server(con, False) 
     
     for val, subdomain in enumerate(sorted(links)):
-        visited_urls = []
-
+        visited_urls = set()
+          
         if subdomain != url:
             resp = download.download(url, con)  # generate a response.py object to use for crawling 
 
