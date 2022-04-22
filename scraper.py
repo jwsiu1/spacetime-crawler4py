@@ -1,5 +1,4 @@
 import re
-import requests
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from collections import defaultdict
@@ -21,11 +20,12 @@ longest_page = 0
 word_freq = defaultdict(int)
 
 def scraper(url, resp):
+  if resp.status != 200:
+    return []
   # add start urls to list of visited urls
-  visited_urls.add(url)
+  if url not in visited_urls:
+    visited_urls.add(url)
   links = extract_next_links(url, resp)
-  
-  links = similarity_threshold(links)
   
   # create and update report
   create_report(url, links)
@@ -54,13 +54,11 @@ def extract_next_links(url, resp):
     return list
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
-  # checks if there is information
-  if soup is not None:
-    tokens = tokenize(soup)
-    # check and update word freqeuncies
-    for word in tokens:
-      if word not in stop_words:
-        word_freq[word.lower()] += 1
+  tokens = tokenize(soup)
+  # check and update word freqeuncies
+  for word in tokens:
+    if word not in stop_words:
+      word_freq[word.lower()] += 1
   for link in soup.find_all('a'):
       l = link.get('href')
       # makes sure link is valid
@@ -129,50 +127,6 @@ def trap(url):
 
   return False
 
-# find similarities between two web pages based on similar tokens and threshold
-def similarity_threshold(links):
-    if len(links) < 2:
-        return
-
-    threshold = 0.90  # 90%
-
-    # store url with its tokens
-    tokens_dict = {}
-
-    # tokenize all links
-    for link in links:
-        page = requests.get(link)
-        s = BeautifulSoup(page.content, 'lxml')
-
-        tokens_dict[link] = set(tokenize(s))
-
-    # compare each link's tokens with the other's
-    for url in links:
-        t1 = tokens_dict[url]
-
-        for link in links:
-            if link != url:
-                t2 = tokens_dict[link]
-
-                a = (t1.intersection(t2))
-                b = (set(t1.union(t2)))
-
-                # print(a)
-                # print(b)
-
-                similarity = (float(len(a) / len(b)))
-                # print(similarity)
-
-                if similarity >= threshold:
-                    links.remove(link)
-
-
-    # for link in links:
-    #     print(link)
-    # print('\n')
-
-    return links
-  
 # tokenizer
 def tokenize(soup):
   global longest_page
@@ -199,7 +153,7 @@ def create_report(url, links):
   global word_freq 
   # create new text file to store report results
   with open("Report.txt", mode="w") as f:
-    f.write("\nUnique pages: " + str(len(visited_urls)))
+    f.write("Unique pages: " + str(len(visited_urls)))
     f.write("\nLongest page: " + str(longest_page) + " words")
     f.write("\nCommon words: \n")
     if len(word_freq) is not None:
@@ -207,7 +161,7 @@ def create_report(url, links):
       count = 0
       for word, total in result:
         if count < 50:
-          f.write(word + ", " + str(total) + "\n")
+          f.write("\t" + word + ", " + str(total) + "\n")
           count += 1
     
     f.write("\nSubdomains of " + url + ": ")
