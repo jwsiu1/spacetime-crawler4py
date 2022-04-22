@@ -180,7 +180,7 @@ def create_report(url, links):
         visited_urls = set()
           
         if subdomain != url:
-            resp = download.download(url, con)  # generate a response.py object to use for crawling 
+            resp = download.download(subdomain, con)  # generate a response.py object to use for crawling 
 
             # list to store subdomain hyperlinks
             subdomain_links = []
