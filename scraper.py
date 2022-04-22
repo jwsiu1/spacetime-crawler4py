@@ -47,7 +47,7 @@ def extract_next_links(url, resp):
   list = []
   # checks for valid response status (200)
   if resp.status != 200:
-      return list
+    return list
   # checks that webpages have at least 250 words or less than 20000 words 
   # https://wordcounter.net/words-per-page
   if len(resp.raw_response.content) < 250 or len(resp.raw_response.content) > 45000:
@@ -71,8 +71,6 @@ def extract_next_links(url, resp):
           if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
               visited_urls.add(l_defrag[0])
               list.append(l_defrag[0])
-  #set_list = set(list)
-  #list = [a for a in set_list]
   return list
 
 def is_valid(url):
@@ -119,8 +117,11 @@ def trap(url):
   # checks for sites with ?share= in url
   if "?share=" in url:
       return True
-  # checks for sites with ?session= ion url
+  # checks for sites with ?session= in url
   if "?session=" in url:
+      return True
+  # checks for sites with ?action= in url
+  if "?action=" in url:
       return True
   # checks for YYYY/MM/DD in url
   if re.search('([0-2]{1}[0-9]{3})\/((0[1-9]{1})|(1[0-2]{1}))\/(0[1-9]{1}|[1-2][0-9]{1}|(3[0-1]{1}))', url) != None:
