@@ -2,6 +2,9 @@ import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from collections import defaultdict
+import configparser
+from utils import download, config, server_registration
+
 
 stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", 
               "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", 
@@ -165,7 +168,45 @@ def create_report(url, links):
           count += 1
     
     f.write("\nSubdomains of " + url + ": ")
+    
+    # begin process to crawl each subdomain and find number of unique pages
+    con = configparser.ConfigParser()  # use configparser to parse and read "config.ini" file
+    con.read("config.ini")
+    
+    con = config.Config(con)
+    con.cache_server = server_registration.get_cache_server(con, False) 
+    
     for val, subdomain in enumerate(sorted(links)):
-      if subdomain != url:
-        f.write('\n' + subdomain + ", " + str(val + 1))
+        visited_urls = []
+
+        if subdomain != url:
+            resp = download.download(url, con)  # generate a response.py object to use for crawling 
+
+            # list to store subdomain hyperlinks
+            subdomain_links = []
+
+            # checks that status code is 200
+            if resp.status != 200:
+                subdomain_links = []
+            # checks that webpages have at least 250 words or less than 20000 words
+            elif len(resp.raw_response.content) < 250 or len(resp.raw_response.content) > 45000:
+                subdomain_links = []
+            else:
+                # use BeautifulSoup to extract links
+                soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+
+                for link in soup.find_all('a'):
+                    l = link.get('href')
+
+                    # makes sure link is valid
+                    if l is not None:
+                        # remove url fragment
+                        l_defrag = l.split('#')
+
+                    # checks for duplication and if url can be crawled
+                    if l_defrag[0] not in visited_urls and is_valid(l_defrag[0]):
+                        visited_urls.append(l_defrag[0])
+                        subdomain_links.append(l_defrag[0])
+
+            f.write('\n' + subdomain + ", " + str(len(subdomain_links)))
  
