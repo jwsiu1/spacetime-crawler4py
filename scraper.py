@@ -26,23 +26,26 @@ stop_words = {"a", "about", "above", "after", "again", "against", "all", "am", "
               "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", 
               "your", "yours", "yourself", "yourselves"}
 
+# stores urls that have been crawled to avoid duplication
 visited_urls = set()
+# stores number of words from longest page
 longest_page = 0
+# stores words plus total frequency
 word_freq = defaultdict(int)
+# stores subdomains and total of unique pages
 subdomains = defaultdict(int)
 
 def scraper(url, resp):
+  global visited_urls
+  global word_freq
   global subdomains
-  if resp.status != 200:
-    return []
   # add start urls to list of visited urls
   if url not in visited_urls:
     visited_urls.add(url)
+  # extract other links from current link
   links = extract_next_links(url, resp)
-  
   # create and update report
   create_report(url, links)
-  
   return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
@@ -67,6 +70,7 @@ def extract_next_links(url, resp):
     return list
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+  # tokenize content of page
   tokens = tokenize(soup)
   # check and update word freqeuncies
   for word in tokens:
@@ -120,13 +124,14 @@ def is_valid(url):
   except TypeError:
       print ("TypeError for ", parsed)
       raise
-        
+      
+# check for traps
 def trap(url):
-  # checks for sites with replyto in url
-  if "replyto" in url:
-      return True
   # checks for sites with calendar in url
-  if "calendar" in url: 
+  if "calendar" in url:
+      return True
+  # checks for sites with replyto in url
+  if "replyto" in url: 
       return True
   # checks for sites with ?share= in url
   if "?share=" in url:
@@ -147,14 +152,13 @@ def trap(url):
 def tokenize(soup):
   global longest_page
   text = soup.get_text()
+  # tokenizes words with apostrophes as 1 token (ie. "isn't")
   result = re.split("[^a-zA-Z0-9']", text)
   result = list(filter(None, result))
   # check and update longest_page
   if len(result) > longest_page:
     longest_page = len(result)
   return result
-            
-    
     
 # Report Answers:
     # unique pages : http://www.ics.uci.edu#aaa and http://www.ics.uci.edu#bbb are the same
@@ -163,14 +167,14 @@ def tokenize(soup):
     # number of subdomains (print URL, number)
     
 def create_report(url, links):
-  # set of urls to avoid duplication of url with same domain and path
-  global visited_urls 
-  # dictionary to hold word frequencies
-  global word_freq 
   # create new text file to store report results
   with open("Report.txt", mode="w") as f:
+    
+    # print total amount of unique pages
     f.write("Unique pages: " + str(len(visited_urls)))
+    # print longest page of words
     f.write("\nLongest page: " + str(longest_page) + " words")
+    # print most common 50 words
     f.write("\nCommon words: \n")
     if len(word_freq) is not None:
       result = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
@@ -179,10 +183,10 @@ def create_report(url, links):
         if count < 50:
           f.write("\t" + word + ", " + str(total) + "\n")
           count += 1
-    
+    # print all subdomains of ics.uci.edu and total
     f.write("\nSubdomains of ics.uci.edu: \n")
-    for link, val in sorted(subdomains.items()):
-      f.write("\t" + link + ", " + str(val) + "\n")
+    for link, total in sorted(subdomains.items()):
+      f.write("\t" + link + ", " + str(total) + "\n")
     
 #     # begin process to crawl each subdomain and find number of unique pages
 #     for val, subdomain in enumerate(sorted(links)):
