@@ -55,11 +55,11 @@ def extract_next_links(url, resp):
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
   # checks if there is information
   if soup is not None:
-     tokens = tokenize(soup)
-      # check and update word freqeuncies
-      for word in tokens:
-        if word not in stop_words:
-          word_freq[word.lower()] += 1
+    tokens = tokenize(soup)
+    # check and update word freqeuncies
+    for word in tokens:
+      if word not in stop_words:
+        word_freq[word.lower()] += 1
   for link in soup.find_all('a'):
       l = link.get('href')
       # makes sure link is valid
