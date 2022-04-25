@@ -147,7 +147,7 @@ def trap(url):
 # tokenizer
 def tokenize(soup):
   global longest_page
-  text = soup.get_text()
+  text = soup.text
   # tokenizes words with apostrophes as 1 token (ie. "isn't")
   result = re.split("[^a-zA-Z0-9']", text)
   result = list(filter(None, result))
