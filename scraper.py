@@ -54,9 +54,13 @@ def extract_next_links(url, resp):
   # checks for valid response status (200)
   if resp.status != 200:
     return list
-  # checks that webpages have at least 250 words or less than 20000 words 
+  # checks that webpages have important text (not too short, not too long)
   # https://wordcounter.net/words-per-page
-  if len(resp.raw_response.content) < 250 or len(resp.raw_response.content) > 45000:
+  # https://wolfgarbe.medium.com/the-average-word-length-in-english-language-is-4-7-35750344870f 
+  # 4.7 = average of letters per word
+  # 250 words = 250 * 4.7 = 1175
+  # 20000 words = 20000 * 4.7 = 94000
+  if len(resp.raw_response.content) < 1175 or len(resp.raw_response.content) > 94000:
     return list
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
@@ -66,6 +70,7 @@ def extract_next_links(url, resp):
   for word in tokens:
     if word not in stop_words:
       word_freq[word.lower()] += 1
+  # extracting links from soup
   for link in soup.find_all('a'):
       l = link.get('href')
       # makes sure link is valid
@@ -84,6 +89,9 @@ def is_valid(url):
   # There are already some conditions that return False.
   try:
       parsed = urlparse(url)
+      # checks if urls are traps
+      if trap(url):
+        return False
       # checks if scheme is valid
       if parsed.scheme not in set(["http", "https"]):
         return False
@@ -93,9 +101,6 @@ def is_valid(url):
         return False
       # checks if path is valid
       if parsed.netloc.endswith("today.uci.edu") and "/department/information_computer_sciences/" not in parsed.path:
-        return False
-      # checks if urls are traps
-      if trap(url):
         return False
       # keeps track of ics.uci.edu subdomains
       # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
@@ -117,11 +122,8 @@ def is_valid(url):
       
 # check for traps
 def trap(url):
-  # checks for sites with calendar in url
-  if "calendar" in url:
-      return True
-  # checks for sites with replyto in url
-  if "replyto" in url: 
+  # checks for sites with ?replyto= in url
+  if "?replyto=" in url: 
       return True
   # checks for sites with ?share= in url
   if "?share=" in url:
@@ -131,6 +133,10 @@ def trap(url):
       return True
   # checks for sites with ?action= in url
   if "?action=" in url:
+      return True
+    
+  # checks for sites with calendar in url
+  if "calendar" in url:
       return True
   # checks for YYYY/MM/DD in url
   if re.search('([0-2]{1}[0-9]{3})\/((0[1-9]{1})|(1[0-2]{1}))\/(0[1-9]{1}|[1-2][0-9]{1}|(3[0-1]{1}))', url) != None:
@@ -157,14 +163,14 @@ def tokenize(soup):
     # number of subdomains (print URL, number)
     
 def create_report(url, links):
-  # create new text file to store report results
+  # create new text file to write report results
   with open("Report.txt", mode="w") as f:
     
     # print total amount of unique pages
     f.write("Unique pages: " + str(len(visited_urls)))
     # print longest page of words
     f.write("\nLongest page: " + str(longest_page) + " words")
-    # print most common 50 words
+    # print most common 50 words (word, total)
     f.write("\nCommon words: \n")
     if len(word_freq) is not None:
       result = sorted(word_freq.items(), key=lambda x:x[1], reverse=True)
@@ -173,7 +179,7 @@ def create_report(url, links):
         if count < 50:
           f.write("\t" + word + ", " + str(total) + "\n")
           count += 1
-    # print all subdomains of ics.uci.edu and total
+    # print all subdomains of ics.uci.edu and total (url, total)
     f.write("\nSubdomains of ics.uci.edu: \n")
     for link, total in sorted(subdomains.items()):
       f.write("\t" + link + ", " + str(total) + "\n")
