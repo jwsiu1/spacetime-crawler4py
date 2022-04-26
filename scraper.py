@@ -125,6 +125,9 @@ def trap(url):
   # checks for sites with ?replyto= in url
   if "?replyto=" in url: 
       return True
+  # checks for sites with ?replytocom= in url
+  if "?replytocom=" in url: 
+      return True
   # checks for sites with ?share= in url
   if "?share=" in url:
       return True
