@@ -53,14 +53,8 @@ def extract_next_links(url, resp):
     return list
   if resp.url not in visited_urls:
     visited_urls.add(resp.url)
-  # keeps track of ics.uci.edu subdomains
-  # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
-  if ".ics.uci.edu" in resp.url and "www.ics.uci.edu" not in resp.url:
-    subdomains[resp.url] += 1
   # checks that webpages have important text (not too short, not too long)
   # https://wordcounter.net/words-per-page
-  # https://wolfgarbe.medium.com/the-average-word-length-in-english-language-is-4-7-35750344870f 
-  # 4.7 = average of letters per word
   # 250 words minimum
   # 20000 words maximum
   # use BeautifulSoup to extract links
@@ -71,7 +65,10 @@ def extract_next_links(url, resp):
   tokens = tokenize(soup.get_text())
   # check and update word freqeuncies
   for word in tokens:
-    if word not in stop_words:
+    # words must not be in stop_words
+    # words must be more than one character since "i" and "a" are in stop_words
+    # words must not contain any numbers in it ("2019" is not considered a word but rather a token)
+    if word not in stop_words and not re.search(r'\d', word) and len(word) != 1:
       word_freq[word.lower()] += 1
   # extracting links from soup
   for link in soup.find_all('a'):
@@ -104,6 +101,10 @@ def is_valid(url):
       # checks if path is valid
       if parsed.netloc.endswith("today.uci.edu") and "/department/information_computer_sciences/" not in parsed.path:
         return False
+      # keeps track of ics.uci.edu subdomains
+      # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
+      if parsed.netloc.endswith(".ics.uci.edu") and parsed.netloc != "www.ics.uci.edu":
+        subdomains[parsed.scheme + "://" + parsed.netloc] += 1
       return not re.match(
           r".*\.(css|js|bmp|gif|jpe?g|ico"
           + r"|png|tiff?|mid|mp2|mp3|mp4"
