@@ -29,9 +29,6 @@ def scraper(url, resp):
   global visited_urls
   global word_freq
   global subdomains
-  # add start urls to list of visited urls
-  if url not in visited_urls:
-    visited_urls.add(url)
   # extract other links from current link
   links = extract_next_links(url, resp)
   # create and update report
@@ -54,16 +51,22 @@ def extract_next_links(url, resp):
   # checks for valid response status (200)
   if resp.status != 200:
     return list
+  if resp.url not in visited_urls:
+    visited_urls.add(resp.url)
+  # keeps track of ics.uci.edu subdomains
+  # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
+  if ".ics.uci.edu" in resp.url and "www.ics.uci.edu" not in resp.url:
+    subdomains[resp.url] += 1
   # checks that webpages have important text (not too short, not too long)
   # https://wordcounter.net/words-per-page
   # https://wolfgarbe.medium.com/the-average-word-length-in-english-language-is-4-7-35750344870f 
   # 4.7 = average of letters per word
-  # 250 words = 250 * 4.7 = 1175
-  # 20000 words = 20000 * 4.7 = 94000
-  if len(resp.raw_response.content) < 1175 or len(resp.raw_response.content) > 94000:
-    return list
+  # 250 words minimum
+  # 20000 words maximum
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+  if len(soup.get_text().split()) < 250 or len(soup.get_text().split()) > 20000:
+    return list
   # tokenize content of page
   tokens = tokenize(soup.get_text())
   # check and update word freqeuncies
@@ -79,7 +82,6 @@ def extract_next_links(url, resp):
           l_defrag = l.split("#")
           # checks for duplication
           if l_defrag[0] not in visited_urls:
-              visited_urls.add(l_defrag[0])
               list.append(l_defrag[0])
   return list
 
@@ -102,10 +104,6 @@ def is_valid(url):
       # checks if path is valid
       if parsed.netloc.endswith("today.uci.edu") and "/department/information_computer_sciences/" not in parsed.path:
         return False
-      # keeps track of ics.uci.edu subdomains
-      # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
-      if parsed.netloc.endswith(".ics.uci.edu") and parsed.netloc != "www.ics.uci.edu":
-        subdomains[parsed.netloc] += 1
       return not re.match(
           r".*\.(css|js|bmp|gif|jpe?g|ico"
           + r"|png|tiff?|mid|mp2|mp3|mp4"
