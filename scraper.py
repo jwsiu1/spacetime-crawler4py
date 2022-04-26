@@ -68,7 +68,7 @@ def extract_next_links(url, resp):
     # words must not be in stop_words
     # words must be more than one character since "i" and "a" are in stop_words
     # words must not contain any numbers in it ("2019" is not considered a word but rather a token)
-    if word not in stop_words and not re.search(r'\d', word) and len(word) != 1:
+    if word.lower() not in stop_words and not re.search(r'\d', word) and len(word) != 1:
       word_freq[word.lower()] += 1
   # extracting links from soup
   for link in soup.find_all('a'):
