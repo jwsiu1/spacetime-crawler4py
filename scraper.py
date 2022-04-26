@@ -65,7 +65,7 @@ def extract_next_links(url, resp):
   # use BeautifulSoup to extract links
   soup = BeautifulSoup(resp.raw_response.content, 'lxml')
   # tokenize content of page
-  tokens = tokenize(soup)
+  tokens = tokenize(soup.get_text())
   # check and update word freqeuncies
   for word in tokens:
     if word not in stop_words:
@@ -150,7 +150,7 @@ def trap(url):
 # tokenizer
 def tokenize(soup):
   global longest_page
-  text = soup.text
+  text = soup
   # tokenizes words with apostrophes as 1 token (ie. "isn't")
   result = re.split("[^a-zA-Z0-9']", text)
   result = list(filter(None, result))
