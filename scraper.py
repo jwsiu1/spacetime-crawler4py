@@ -104,7 +104,7 @@ def is_valid(url):
       # keeps track of ics.uci.edu subdomains
       # found issue where www.informatics.uci.edu includes www and informatics includes "ics"
       if parsed.netloc.endswith(".ics.uci.edu") and parsed.netloc != "www.ics.uci.edu":
-        subdomains[parsed.scheme + "://" + parsed.netloc] += 1
+        subdomains["https://" + parsed.netloc] += 1
       return not re.match(
           r".*\.(css|js|bmp|gif|jpe?g|ico"
           + r"|png|tiff?|mid|mp2|mp3|mp4"
